@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://callmesahu:12ab89yz@cluster0.uqntv2j.mongodb.net/');
+mongoose.connect('mongodb+srv://callmesahu:12ab89yz@cluster0.uqntv2j.mongodb.net/course_selling_app');
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
@@ -24,7 +24,6 @@ const CourseSchema = new mongoose.Schema({
     imageLink: String,
     price: Number
 });
-
 
 const Admin = mongoose.model('Admin', AdminSchema);
 const User = mongoose.model('User', UserSchema);

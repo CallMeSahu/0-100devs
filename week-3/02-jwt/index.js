@@ -4,7 +4,7 @@ const zod = require('zod');
 
 
 /**
- * Generates fa JWT or a given username and password.
+ * Generates a JWT for a given username and password.
  *
  * @param {string} username - The username to be included in the JWT payload.
  *                            Must be a valid email address.
@@ -15,19 +15,19 @@ const zod = require('zod');
  *                        the password does not meet the length requirement.
  */
 
-const userSchema = zod.object({
-    username: zod.string().email(),
-    password: zod.string().min(6)
-})
+const emailSchema = zod.string().email();
+const passwordSchema = zod.string().min(6);
 
 function signJwt(username, password) {
-    try {
-        const validateUser = userSchema.parse({username, password});
-        const token = jwt.sign({username, password}, jwtPassword);
-        return token;
-    } catch (error) {
-        return null;
+    const usernameResponse = emailSchema.safeParse(username);
+    const passwordResponse = passwordSchema.safeParse(password);
+
+    if(!usernameResponse.success || !passwordResponse.success){
+        return null
     }
+
+    const token = jwt.sign({ username }, jwtPassword);
+    return token;
 }
 
 /**
@@ -39,13 +39,13 @@ function signJwt(username, password) {
  *                    using the secret key.
  */
 function verifyJwt(token) {
+    let valid = true;
     try {
-         const decoded = jwt.verify(token,jwtPassword)
-         return true;
+        jwt.verify(token, jwtPassword);
     } catch (error) {
-         return false;
+        valid = false;
     }
-
+    return valid;
 }
 
 /**
@@ -56,14 +56,13 @@ function verifyJwt(token) {
  *                         Returns false if the token is not a valid JWT format.
  */
 function decodeJwt(token) {
-    const decoded = jwt.decode(token)
-    if(decoded === null){
-        return false;
-    }else{
+    const decoded = jwt.decode(token, signJwt);
+    if(decoded){
         return true;
+    }else{
+        return false;
     }
 }
-
 
 module.exports = {
   signJwt,

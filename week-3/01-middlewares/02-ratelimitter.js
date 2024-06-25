@@ -17,15 +17,15 @@ setInterval(() => {
 }, 1000)
 
 app.use((req, res, next) => {
-  const userid = req.headers["user-id"];
+  const userid = req.headers[`user-id`];
   if(numberOfRequestsForUser[userid]){
-    numberOfRequestsForUser[userid] += numberOfRequestsForUser[userid] + 1;
     if(numberOfRequestsForUser[userid] > 5){
-      res.status(404).json({})
+      res.status(404).json({});
     }else{
+      numberOfRequestsForUser[userid] = numberOfRequestsForUser[userid] + 1;
       next();
     }
-  } else{
+  }else{
     numberOfRequestsForUser[userid] = 1;
     next();
   }

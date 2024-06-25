@@ -1,15 +1,11 @@
-const { Admin } = require("../db");
-
+const { Admin } = require('../db/index')
+// Middleware for handling auth
 async function adminMiddleware(req, res, next) {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = req.headers.username;
+    const password = req.headers.password;
 
-    const value = await Admin.findOne({username, password});
-    if(value){
-        next();
-    }else{
-        res.status(403).json({ msg: 'User does not exist'})
-    }    
+    const value = await Admin.findOne({ username, password });
+    value ? next() : res.status(403).json({msg: 'Admin does not exist!'});
 }
 
 module.exports = adminMiddleware;
